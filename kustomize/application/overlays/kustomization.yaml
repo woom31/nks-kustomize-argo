@@ -13,7 +13,7 @@ resources:
 #############################
 images:
 - name: <PATCH>:init
-  newName: container-registry-adm.ncr.gov-ntruss.com/application
+  newName: container-registry-user2.ncr.gov-ntruss.com/application
   newTag: '240806121119'
 
 
@@ -21,14 +21,14 @@ images:
 #############################
 ##       Namespace         ##
 #############################
-namespace: application-adm
+namespace: application-user2
 
 
 #############################
 ##          Labels         ##
 #############################
 commonLabels:
-  name: application-adm
+  name: application-user2
 
 
 #############################
@@ -41,7 +41,7 @@ patches:
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: application-adm
+      value: application-user2
   target:
     kind: Service
     name: <PATCH>
@@ -91,7 +91,7 @@ patches:
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: application-adm
+      value: application-user2
   target:
     kind: Deployment
     name: <PATCH>
@@ -121,7 +121,7 @@ patches:
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: application-adm-ing
+      value: application-user2-ing
   target:
     kind: Ingress
     name: <PATCH>
@@ -130,7 +130,7 @@ patches:
     - op: replace
       path: /metadata/annotations
       value:
-        alb.ingress.kubernetes.io/load-balancer-name: "application-adm-ing"
+        alb.ingress.kubernetes.io/load-balancer-name: "application-user2-ing"
         alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
         alb.ingress.kubernetes.io/load-balancer-size: small
         alb.ingress.kubernetes.io/network-type: public
@@ -148,7 +148,7 @@ patches:
             pathType: Prefix
             backend:
               service:
-                name: application-adm
+                name: application-user2
                 port:
                   number: 8080
   target:
@@ -161,6 +161,6 @@ patches:
 - patch: |-
     - op: replace
       path: /metadata/name
-      value: application-adm
+      value: application-user2
   target:
     kind: Namespace
