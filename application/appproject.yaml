@@ -1,0 +1,15 @@
+# AppProject for development environment
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+ name: application-adm
+ namespace: argo-adm
+spec:
+ sourceRepos:
+ - '*'
+ destinations:
+ - server: '*'
+   namespace: '*'
+ clusterResourceWhitelist:
+ - group: '*'
+   kind: '*'

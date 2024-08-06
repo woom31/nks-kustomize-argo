@@ -1,0 +1,28 @@
+# ApplicationSet for development environment
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applicationset
+  namespace: argo-adm
+spec:
+  generators:
+  - list:  
+      elements:
+      - system: adm
+        application: application-adm
+        url: https://kubernetes.default.svc
+  template:
+    metadata:
+      name: '{{application}}'
+    spec:
+      project: 'application-{{system}}'
+      source:
+        repoURL: https://github.com/kosaf1996/nks-kustomize-argo.git
+        targetRevision: main
+        path: 'kustomize/{{application}}/overlays/'
+        directory:
+          recurse: false 
+      destination:
+        server: '{{url}}'
+        namespace: 'application-adm'
+---

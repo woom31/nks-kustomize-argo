@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <PATCH>
+spec:
+  selector:
+    matchLabels:
+      name: <commonLabels>
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        name: <commonLabels>
+    spec:
+      containers:
+      - name: app
+        image: <PATCH>:init
+        imagePullPolicy: Always
+        ports:
+        - containerPort: <PATCH>
+        readinessProbe: 
+          httpGet:
+            path: <PATCH>
+            port: <PATCH>
+          initialDelaySeconds: <PATCH>
+          periodSeconds: <PATCH>
+          timeoutSeconds: <PATCH>
+        livenessProbe:
+          httpGet:
+            path: <PATCH>
+            port: <PATCH>
+          initialDelaySeconds: <PATCH>
+          periodSeconds: <PATCH>
+          timeoutSeconds: <PATCH>
+      terminationGracePeriodSeconds: 30

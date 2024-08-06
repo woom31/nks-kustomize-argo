@@ -1,0 +1,166 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+#############################
+##        resources        ##
+#############################
+resources:
+- ../../base
+
+
+#############################
+##          Image          ##
+#############################
+images:
+- name: <PATCH>:init
+  newName: container-registry-adm.ncr.gov-ntruss.com/application
+  newTag: '240805145541'
+
+
+
+#############################
+##       Namespace         ##
+#############################
+namespace: application-adm
+
+
+#############################
+##          Labels         ##
+#############################
+commonLabels:
+  name: application-adm
+
+
+#############################
+##        	Patch          ##
+#############################
+patches:
+#############################
+##        	Service        ##
+#############################
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: application-adm
+  target:
+    kind: Service
+    name: <PATCH>
+
+- patch: |-
+    - op: replace
+      path: /spec/ports
+      value:
+        - name: http 
+          port: 8080
+          targetPort: 8080
+  target:
+    kind: Service
+    name: <PATCH>
+
+#############################
+##        Deployment       ##
+#############################
+##livenessProbe
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/livenessProbe
+      value:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+  target:
+    kind: Deployment
+
+##readinessProbe
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/readinessProbe
+      value:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+  target:
+    kind: Deployment
+
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: application-adm
+  target:
+    kind: Deployment
+    name: <PATCH>
+
+
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/ports/0/containerPort
+      value: 8080
+  target:
+    kind: Deployment
+    
+- patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/resources
+      value:
+        requests:
+          memory: 1Gi
+        limits:
+          memory: 1Gi
+  target:
+    kind: Deployment
+
+#############################
+##         Ingress         ##
+#############################
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: application-adm-ing
+  target:
+    kind: Ingress
+    name: <PATCH>
+
+- patch: |-
+    - op: replace
+      path: /metadata/annotations
+      value:
+        alb.ingress.kubernetes.io/load-balancer-name: "application-adm-ing"
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP":80}]'
+        alb.ingress.kubernetes.io/load-balancer-size: small
+        alb.ingress.kubernetes.io/network-type: public
+        alb.ingress.kubernetes.io/healthcheck-path: "/"
+  target:
+    kind: Ingress
+
+- patch: |-
+    - op: add
+      path: /spec/rules
+      value:
+      - http:
+          paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: application-adm
+                port:
+                  number: 8080
+  target:
+    kind: Ingress
+
+
+#############################
+##         Namespace       ##
+#############################
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: application-adm
+  target:
+    kind: Namespace
