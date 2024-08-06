@@ -14,7 +14,7 @@ resources:
 images:
 - name: <PATCH>:init
   newName: container-registry-user2.ncr.gov-ntruss.com/application
-  newTag: '240806121119'
+  newTag: '240806142308'
 
 
 
